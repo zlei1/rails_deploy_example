@@ -1,0 +1,14 @@
+:concurrency: 5
+
+:queues:
+  - [default, 10]
+  - [active_storage_analysis, 10]
+  - [active_storage_purge, 10]
+  - [high, 16]
+
+development:
+  :concurrency: 5
+staging:
+  :concurrency: 10
+production:
+  :concurrency: 16
