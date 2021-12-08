@@ -44,17 +44,13 @@ set :linked_files, %w{
 namespace :deploy do
   desc "Initialize application"
   task :initialize do
-    invoke 'docker:build'
     invoke 'docker:database:up'
-    invoke 'docker:database:create'
-    invoke 'docker:database:migrate'
     invoke 'docker:redis:up'
   end
 
   desc "restart application"
   task :restart do
     invoke 'docker:restart:web'
-    invoke 'docker:database:migrate'
   end
 
   desc "clear containers"

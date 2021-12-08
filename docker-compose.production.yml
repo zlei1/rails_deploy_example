@@ -7,7 +7,7 @@ services:
       dockerfile: ./docker/Dockerfile
       args:
         BUNDLE_WITHOUT: ''
-        EXECJS_RUNTIME: 'Node'
+        # EXECJS_RUNTIME: 'Node'
         RAILS_ENV: 'production'
         RAILS_SERVE_STATIC_FILES: 'false'
     tty: true
@@ -20,13 +20,9 @@ services:
     build:
       context: .
       dockerfile: ./docker/dockerfiles/rails.Dockerfile
-    image: rails_deploy_example-rails
+    image: rails_deploy_example-rails:production
     volumes:
-      - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - cache:/app/tmp/cache
-      - bundle:/usr/local/bundle
-      - log:/app/log
+      - /var/www/rails_deploy_example_production/shared/log:/app/log
     depends_on:
       - postgres
       - redis
@@ -41,13 +37,9 @@ services:
 
   sidekiq:
     <<: *base
-    image: rails_deploy_example-sidekiq
+    image: rails_deploy_example-sidekiq:production
     volumes:
-      - node_modules:/app/node_modules
-      - packs:/app/public/packs
-      - cache:/app/tmp/cache
-      - bundle:/usr/local/bundle
-      - log:/app/log
+      - /var/www/rails_deploy_example_production/shared/log:/app/log
     depends_on:
       - postgres
       - redis
@@ -60,9 +52,9 @@ services:
     image: postgres:12
     restart: always
     ports:
-      - '5432:5432'
+      - '5431:5432'
     volumes:
-      - postgres:/data/postgres
+      - /var/www/rails_deploy_example_production/shared/data/postgres:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=rails_deploy_example_production
       - POSTGRES_USER=postgres
@@ -74,15 +66,6 @@ services:
     command: ["sh", "-c", "redis-server --requirepass \"$REDIS_PASSWORD\""]
     env_file: .env
     volumes:
-      - redis:/data/redis
+      - /var/www/rails_deploy_example_production/shared/data/redis:/data
     ports:
-      - '6379:6379'
-
-volumes:
-  postgres:
-  redis:
-  packs:
-  node_modules:
-  cache:
-  bundle:
-  log:
+      - '6378:6379'
